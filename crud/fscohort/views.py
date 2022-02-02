@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Student
@@ -40,3 +41,17 @@ def student_detail(request, id):
         "student": student
     }
     return render(request, "fscohort/student_detail.html", context)
+
+def student_update(request, id):
+    student = Student.objects.get(id=id)
+    form= StudentForm(instance=student)
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect("list")
+        
+    context = {
+        "form": form
+    }
+    return render(request, "fscohort/student_update.html", context)
